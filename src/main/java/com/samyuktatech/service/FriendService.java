@@ -1,15 +1,21 @@
 package com.samyuktatech.service;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import com.samyuktatech.comman.model.User;
 import com.samyuktatech.comman.model.UserFriend;
 import com.samyuktatech.comman.util.RestUtil;
 
@@ -97,6 +104,26 @@ public class FriendService {
 		}		
 		
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);	
+	}
+	
+	/**
+	 * Get friends of a User
+	 * 
+	 * @param userId
+	 * @return
+	 */
+	@GetMapping("friends/{userId}")
+	public ResponseEntity<?> getFriends(@PathVariable("userId") Long userId) {
+		
+		ResponseEntity<User[]> resp = restTemplate.getForEntity(mysqlServiceHost + "/user/friend/" + userId, 
+				 User[].class);	
+		
+		if (resp.getStatusCode() == HttpStatus.OK) {
+			
+			return ResponseEntity.ok(resp.getBody());
+		}
+		
+		return ResponseEntity.ok(Collections.emptyList());	
 	}
 			
 
